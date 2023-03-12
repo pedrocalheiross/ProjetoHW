@@ -1,10 +1,15 @@
 module mux_ShiftAmt (
-    input wire ShiftAmt,
+    input wire [31:0] ShiftAmt,
 	input wire [31:0] data0,
 	input wire [31:0] data1,
+	input wire [31:0] data2,
 	output wire [31:0] out
 );
 
-	assign out = (ShiftAmt) ? data1 : data0;
+	wire [31:0] temp;
+
+
+	assign temp = (ShifAmt[0])? data1 : data0;
+	assign out = (ShiftAmt[1]) ? data2 : temp;
 
 endmodule 
