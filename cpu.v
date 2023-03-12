@@ -23,13 +23,16 @@ module cpu(
     wire RegWrite;
     wire SEControl;
     wire ALUOutCtrl;
+    wire EPCControl;
+    wire HiWrite;
+    wire LoWrite;
 
 
     // FIOS DE CONTROLE COM MAIS DE 1 BIT
 
     wire [2:0] ALUOp;
     wire [2:0] ShiftControl
-    wire [2:0] IorD;
+    wire [1:0] IorD;
     wire [2:0] PCSrc;
 
     // FIOS DE CONTROLE PARA MUX
@@ -38,7 +41,7 @@ module cpu(
     wire [1:0]ALUSrcB;
     wire [3:0]DataSrc;
     wire RegDst;
-    wire ShiftAmt;
+    wire [1:0]ShiftAmt;
     wire ShiftSrc;
     wire ExcpContrl;
 
@@ -52,10 +55,11 @@ module cpu(
     wire [31:0] RBtoB;
     wire [31:0] AOut;
     wire [31:0] BOut;
-    wire [31:0] SXTND_out;
     wire [31:0] ULAA_in;
     wire [31:0] ULAB_in;
+    wire [31:0] HiIn;
     wire [31:0] HiOut;
+    wire [31:0] LoIn;
     wire [31:0] LoOut; 
     wire [31:0] ULA_result;
     wire [31:0] AluOutOut;
@@ -65,8 +69,19 @@ module cpu(
     wire [31:0] ShiftLeft2Out;
     wire [31:0] WriteDataIn;
     wire [31:0] ExcpContrlOut;
-
-    
+    wire [31:0] PCSrcOut;
+    wire [31:0] MemToSS;
+    wire [31:0] SignExtend1_32Out;
+    wire [31:0] SScontrolData;
+    wire [31:0] SScontrolB;
+    wire [31:0] LSControlOut;
+    wire [31:0] ShiftSrcOut;
+    wire [31:0] SignExtend16_32Out;
+    wire [31:0] ShiftLeft16Out;
+    wire [31:0] ShiftRegOut;
+    wire [31:0] ShiftLeftOut;
+    wire [31:0] ShiftLeft2628;
+    wire [31:0] IordOut;
 
     // PARTES DE INSTRUÇÃO
 
@@ -78,6 +93,7 @@ module cpu(
     // FIOS DE DADOS COM MENOS DE 32 BITS
 
     wire [4:0] WriteRegIn;
+    wire [4:0] ShiftAmtOut;
 
 
     //MODULOS:
@@ -124,7 +140,14 @@ module cpu(
         PCOut
     );
 
-    RegDesloc ShiftReg();
+    RegDesloc ShiftReg(
+        clk,
+        reset,
+        ShiftControl,
+        ShiftAmtOut,
+        ShiftSrcOut,
+        ShiftRegOut
+    );
     
     ula32 ULA (
         ULAA_in,
@@ -142,22 +165,58 @@ module cpu(
 
     //Made:
 
-    Registrador PcReg();
+    Registrador PcReg(
+        clk,
+        reset,
+        PCWrite,
+        PcSrcOut,
+        PcOut
+    );
 
-    Registrador AluOutReg();
+    Registrador AluOutReg(
+        clk,
+        reset,
+        ALUOutCtrl,
+        ULA_result,
+        AluOutOut
+    );
 
-    Registrador EPCReg();
+    Registrador EPCReg(
+        clk,
+        reset,
+        EPCControl,
+        ULA_result,
+        EPCControlOut
+    );
 
-    Registrador HiReg();
+    Registrador HiReg(
+        clk,
+        reset,
+        HiWrite,
+        HiIn,
+        HiOut
+    );
 
-    Registrador LoReg();
+    Registrador LoReg(
+        clk,
+        reset,
+        LoWrite,
+        LoIn,
+        LoOut
+    );
 
-    Registrado MemDataReg();
+    Registrado MemDataReg(
+        clk,
+        reset,
+        MEMWrite,
+        MEM_to_IR,
+        MemToSS
+    );
 
     Registrador A (
         clk,
         reset,
-        RA
+        RA,
         RBtoA,
         AOut
     );
@@ -165,54 +224,119 @@ module cpu(
     Registrador B (
         clk,
         reset,
-        RA
+        RA,
         RBtoB,
         BOut
     );
 
     sign_extend_16 SE1632(
         OffSet,
-        SXTND_out
+        SignExtend16_32Out
     );
 
-    sign_extend_1to32 SE132();
+    sign_extend_1to32 SE132(
+        LTSignEX,
+        SignExtend1_32Out
+    );
 
-    shiftLeft_16 SL16();
+    shiftLeft_16 SL16(
+        OffSet,
+        ShiftLeft16Out
+    );
 
-    shiftLeft_2 SL2();
+    shiftLeft_2 SL2(
+        SignExtend16_32Out,
+        ShiftLeft2Out
+    );
 
-    shiftLeft_22628 SL2628();
+    shiftLeft_2628 SL2628(
+        MEM_to_IR,
+        shiftLeft2628
+    );
 
     mux_ulaA M_ULAA (
         ALUSrA,
         PCOut,
         AOut,
-        ULAA_in
+        SScontrolData
     );
 
     mux_ulaB M_ULAB (
         ALUSrB,
         BOut,
-        SXTND_out,
-        ULAB_in
+        SignExtend16_32Out,
+        ShiftLeft2Out
     );
 
-    mux_PcSrc M_PcSrc();
+    mux_PcSrc M_PcSrc(
+        ULA_result,
+        AluOutOut,
+        ShiftLeft2628,
+        SScontrolData,
+        EPCControlOut,
+        LSControlOut,
+        PCSrc,
+        PcSrcOut,
+    );
 
-    mux_RegDst M_RDST();
+    mux_RegDst M_RDST(
+        RT,
+        RS,
+        LSControlOut,
+        OffSet,
+    );
     
     mux_DataSrc M_DataSrc(
-        DataSrc,
-        RT,
-        OffSet,
-        WriteRegIn
+        AluOutOut,
+        LSControlOut,
+        HiOut,
+        LoOut,
+        SignExtend1_32Out,
+        SignExtend16_32Out,
+        ShiftLeft16Out,
+        ExcpContrlOut,
+        ShiftRegOut,
+        BOut,
+        AOut,
+        PcOut
     );
 
-    mux_MultDiv M_MD();
+    MultDiv M_MD(
+        MDControl,
+        AOut,
+        BOut,
+        HiIn,
+        LoIn
+    );
 
-    mux_ShiftAmt M_SA();
+    mux_ShiftAmt M_SA(
+        ShiftAmt,
+        SScontrolData,
+        SSControlB,
+        OffSet,
+        ShiftAmtOut
+    );
 
-    mux_ShiftSrc M_SS();
+    mux_ShiftSrc M_SS(
+        ShiftSrc,
+        AOut,
+        BOut,
+        ShiftSrcOut
+    );
+
+    mux_IorD M_ID(
+        PcOut,
+        ULA_result,
+        AluOutOut,
+        ExcpContrlOut,
+        IorD,
+        IordOut
+    );
+
+    mux_ExcpControl M_EC(
+        ExcpContrl,
+        ExcpContrlOut
+    );
 
 
     //AJEITAR ORDEM!
@@ -240,5 +364,3 @@ module cpu(
 
 
 endmodule
-
-
