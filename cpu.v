@@ -31,7 +31,7 @@ module cpu(
     // FIOS DE CONTROLE COM MAIS DE 1 BIT
 
     wire [2:0] ALUOp;
-    wire [2:0] ShiftControl
+    wire [2:0] ShiftControl;
     wire [1:0] IorD;
     wire [2:0] PCSrc;
 
@@ -338,8 +338,6 @@ module cpu(
         ExcpContrlOut
     );
 
-
-    //AJEITAR ORDEM!
     ctrl_unit CTRL (
         clk,
         reset,
@@ -350,15 +348,31 @@ module cpu(
         Gt,
         Lt,
         OPCode,
+        OffSet,
         PCWrite,
         MEMWrite,
+        MEMRead,
         IRWrite,
         RBWrite,
-        RA
+        RAWrite,
+        LSControl,
+        RegWrite,
+        SEControl,
+        ALUOutCtrl,
+        EPCControl,
+        HiWrite,
+        LoWrite,
         ALUOp,
-        M_WREG,
-        M_ULAA,
-        M_ULAB,
+        ShiftControl,
+        IorD,
+        PCSrc,
+        ALUSrcA,
+        ALUSrcB,
+        DataSrc,
+        RegDst,
+        ShiftAmt,
+        ShiftSrc,
+        ExcpContrl,
         reset
     );
 
