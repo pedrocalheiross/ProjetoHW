@@ -40,7 +40,7 @@ module cpu(
     wire [1:0]ALUSrcA;
     wire [1:0]ALUSrcB;
     wire [3:0]DataSrc;
-    wire RegDst;
+    wire [2:0]RegDst;
     wire [1:0]ShiftAmt;
     wire ShiftSrc;
     wire ExcpContrl;
@@ -65,7 +65,6 @@ module cpu(
     wire [31:0] AluOutOut;
     wire [31:0] EPCControlOut;
     wire [31:0] DataSrcOut;
-    wire [31:0] LTSignEX;
     wire [31:0] ShiftLeft2Out;
     wire [31:0] WriteDataIn;
     wire [31:0] ExcpContrlOut;
@@ -80,7 +79,6 @@ module cpu(
     wire [31:0] ShiftLeft16Out;
     wire [31:0] ShiftRegOut;
     wire [31:0] ShiftLeftOut;
-    wire [31:0] ShiftLeft2628;
     wire [31:0] IordOut;
 
     // PARTES DE INSTRUÇÃO
@@ -94,6 +92,8 @@ module cpu(
 
     wire [4:0] WriteRegIn;
     wire [4:0] ShiftAmtOut;
+    wire [27:0] ShiftLeft2628;
+    wire LTSignEX;
 
 
     //MODULOS:
@@ -169,8 +169,8 @@ module cpu(
         clk,
         reset,
         PCWrite,
-        PcSrcOut,
-        PcOut
+        PCSrcOut,
+        PCOut
     );
 
     Registrador AluOutReg(
@@ -250,33 +250,39 @@ module cpu(
     );
 
     shiftLeft_2628 SL2628(
-        MEM_to_IR,
-        shiftLeft2628
+        {RS,RT,OffSet},
+        ShiftLeft2628
     );
 
     mux_ulaA M_ULAA (
-        ALUSrA,
         PCOut,
         AOut,
-        SScontrolData
+        SScontrolData,
+        ALUSrcA,
+        ULAA_in
+
     );
 
     mux_ulaB M_ULAB (
-        ALUSrB,
         BOut,
         SignExtend16_32Out,
-        ShiftLeft2Out
+        ShiftLeft2Out,
+        ALUSrcB,
+        ULAB_in
     );
+
+    wire[31:0] cubo;
+    assign cubo = {PCOut[31:27],ShiftLeft2628};
 
     mux_PcSrc M_PcSrc(
         ULA_result,
         AluOutOut,
-        ShiftLeft2628,
+        cubo,
         SScontrolData,
         EPCControlOut,
         LSControlOut,
         PCSrc,
-        PcSrcOut,
+        PCSrcOut
     );
 
     mux_RegDst M_RDST(
@@ -284,6 +290,8 @@ module cpu(
         RS,
         LSControlOut,
         OffSet,
+        RegDst,
+        WriteRegIn
     );
     
     mux_DataSrc M_DataSrc(
@@ -298,16 +306,16 @@ module cpu(
         ShiftRegOut,
         BOut,
         AOut,
-        PcOut
+        PCOut
     );
 
-    MultDiv M_MD(
-        MDControl,
-        AOut,
-        BOut,
-        HiIn,
-        LoIn
-    );
+    //MultDiv M_MD(
+   //     MDControl,
+    //    AOut,
+    //    BOut,
+    //    HiIn,
+   //     LoIn
+//);
 
     mux_ShiftAmt M_SA(
         ShiftAmt,

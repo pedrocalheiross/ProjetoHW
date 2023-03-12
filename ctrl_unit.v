@@ -45,7 +45,7 @@ module ctrl_unit (
     output reg [1:0]ALUSrcA,
     output reg [1:0]ALUSrcB,
     output reg [3:0]DataSrc,
-    output reg RegDst,
+    output reg [2:0]RegDst,
     output reg [1:0]ShiftAmt,
     output reg ShiftSrc,
     output reg ExcpContrl,
@@ -69,7 +69,7 @@ reg [2:0] COUNTER;
     parameter ST_RESET = 2'b11;
     
     // CÓDIGOS DE OPCODE COMO APELIDOS
-    parameter ADD = 6'b000000;
+    parameter ADD = 3'b00000;
     parameter ADDI = 6'b001000;
     parameter RESET = 6'b111111;
 
@@ -90,9 +90,9 @@ always @(posedge clk) begin
             RBWrite = 1'b0;
             RAWrite = 1'b0;
             ALUOp = 3'b000;
-            DataSrc = 4'b0000;
-            M_ULAA = 1'b0;
-            M_ULAB = 2'b00;
+            RegDst = 3'b000;
+            ALUSrcA = 2'b00;
+            ALUSrcB = 2'b00;
             rst_out = 1'b1;
             //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
             COUNTER = 3'b000;
@@ -106,9 +106,9 @@ always @(posedge clk) begin
             RBWrite = 1'b0;
             RAWrite = 1'b0;
             ALUOp = 3'b000;
-            DataSrc = 4'b0000;
-            M_ULAA = 1'b0;
-            M_ULAB = 2'b00;
+            RegDst = 3'b000;
+            ALUSrcA = 2'b00;
+            ALUSrcB = 2'b00;
             rst_out = 1'b0; ///
             //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
             COUNTER = 3'b000;
@@ -126,9 +126,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b0;
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000;
-                        M_ULAA = 1'b0; ///
-                        M_ULAB = 2'b01; ///
+                        RegDst = 3'b000;
+                        ALUSrcA = 2'b00; ///
+                        ALUSrcB = 2'b01; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -142,9 +142,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b0;
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000;
-                        M_ULAA = 1'b0; ///
-                        M_ULAB = 2'b01; ///
+                        RegDst = 3'b000;
+                        ALUSrcA = 2'b00; ///
+                        ALUSrcB = 2'b01; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -158,15 +158,15 @@ always @(posedge clk) begin
                         RBWrite = 1'b0;
                         RAWrite = 1'b0;
                         ALUOp = 3'b000; 
-                        DataSrc = 4'b0000;
-                        M_ULAA = 1'b0; 
-                        M_ULAB = 2'b00; 
+                        RegDst = 3'b000;
+                        ALUSrcA = 2'b00; 
+                        ALUSrcB = 2'b00; 
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
                     end
                     else if (COUNTER == 3'b101) begin
-                        case(OPCODE)
+                        case(OPCode)
                             ADD: begin
                                 STATE = ST_ADD;
                             end
@@ -185,9 +185,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b0;
                         RAWrite = 1'b1; ///
                         ALUOp = 3'b000; 
-                        DataSrc = 4'b0000;
-                        M_ULAA = 1'b0; 
-                        M_ULAB = 2'b00; 
+                        RegDst = 3'b000;
+                        ALUSrcA = 2'b00; 
+                        ALUSrcB = 2'b00; 
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -201,12 +201,12 @@ always @(posedge clk) begin
                         PCWrite = 1'b0;
                         MEMWrite = 1'b0;
                         IRWrite = 1'b0;
-                        RBWrite = 1'b1; ///
+                        RBWrite = 1'b1; 
                         RAWrite = 1'b0;
-                        ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000; ///
-                        M_ULAA = 1'b1; ///
-                        M_ULAB = 2'b00; ///
+                        ALUOp = 3'b001; 
+                        RegDst = 3'b001; 
+                        ALUSrcA = 2'b01; 
+                        ALUSrcB = 2'b00; 
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -221,9 +221,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b1; ///
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000; ///
-                        M_ULAA = 1'b1; ///
-                        M_ULAB = 2'b00; ///
+                        RegDst = 3'b001; ///
+                        ALUSrcA = 2'b01; ///
+                        ALUSrcB = 2'b00; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -238,9 +238,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b1; ///
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000; ///
-                        M_ULAA = 1'b1; ///
-                        M_ULAB = 2'b00; ///
+                        RegDst = 3'b001; ///
+                        ALUSrcA = 2'b01; ///
+                        ALUSrcB = 2'b00; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -255,15 +255,15 @@ always @(posedge clk) begin
                         RBWrite = 1'b1; ///
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000; ///
-                        M_ULAA = 1'b1; ///
-                        M_ULAB = 2'b00; ///
+                        RegDst = 3'b001; ///
+                        ALUSrcA = 2'b01; ///
+                        ALUSrcB = 2'b00; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
                     end
-                end
-                if (COUNTER == 3'b000) begin
+                
+                    if (COUNTER == 3'b000) begin
                         //SETANDO ESTADOS FUTUROS
                         STATE = ST_ADDI;
                         //SETANDO TODOS OS SINAIS
@@ -273,9 +273,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b1; ///
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000; ///
-                        M_ULAA = 1'b1; ///
-                        M_ULAB = 2'b10; ///
+                        RegDst = 3'b000; ///
+                        ALUSrcA = 2'b01; ///
+                        ALUSrcB = 2'b10; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
@@ -290,13 +290,14 @@ always @(posedge clk) begin
                         RBWrite = 1'b1; ///
                         RAWrite = 1'b0;
                         ALUOp = 3'b001; ///
-                        DataSrc = 4'b0000; ///
-                        M_ULAA = 1'b1; ///
-                        M_ULAB = 2'b10; ///
+                        RegDst = 3'b000; ///
+                        ALUSrcA = 2'b01; ///
+                        ALUSrcB = 2'b10; ///
                         rst_out = 1'b0;
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = COUNTER + 1;
                     end
+                end
             ST_RESET: begin
                 if (COUNTER == 3'b000) begin
                         //SETANDO ESTADOS FUTUROS
@@ -308,9 +309,9 @@ always @(posedge clk) begin
                         RBWrite = 1'b0;
                         RAWrite = 1'b0;
                         ALUOp = 3'b000;
-                        DataSrc = 4'b0000;
-                        M_ULAA = 1'b0;
-                        M_ULAB = 2'b10;
+                        RegDst = 3'b000;
+                        ALUSrcA = 2'b00;
+                        ALUSrcB = 2'b10;
                         rst_out = 1'b1; ///
                         //SETANDO CONTADOR PARA PRÓXIMA OPERAÇÃO
                         COUNTER = 3'b000;
