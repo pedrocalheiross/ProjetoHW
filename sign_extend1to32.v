@@ -4,6 +4,6 @@ module sign_extend_1to32 (
     );
 
 
-    assign out = {31'b0, LT};;
+    assign out = {31'b0, in};;
 
 endmodule
