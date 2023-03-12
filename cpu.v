@@ -205,7 +205,7 @@ module cpu(
         LoOut
     );
 
-    Registrado MemDataReg(
+    Registrador MemDataReg(
         clk,
         reset,
         MEMWrite,
