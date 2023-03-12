@@ -9,7 +9,7 @@ module mux_ShiftAmt (
 	wire [4:0] temp;
 
 
-	assign temp = (ShifAmt[0])? data1[4:0] : data0[4:0];
+	assign temp = (ShiftAmt[0])? data1[4:0] : data0[4:0];
 	assign out = (ShiftAmt[1]) ? data2[10:6] : temp;
 
 endmodule 

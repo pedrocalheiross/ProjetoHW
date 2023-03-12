@@ -1,6 +1,6 @@
 module mux_ExcpControl (
     input wire[1:0] in,
-    output wire[31:0] out;
+    output wire[31:0] out
 
 );
 
