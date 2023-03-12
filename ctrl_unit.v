@@ -14,41 +14,41 @@ module ctrl_unit (
     // PARTE DA INTRUÇÃO QUE IMPORTA
 
     input wire [5:0] OPCode,
-    input wire [5:0] funct;
+    input wire [5:0] funct,
 
     // FIOS DE CONTROLE COM 1 BIT
 
-    output reg PCWrite;
-    output reg MEMWrite;
-    output reg MEMRead;
-    output reg IRWrite;
-    output reg RBWrite;
-    output reg RAWrite;
-    output reg LSControl;
-    output reg RegWrite;
-    output reg SEControl;
-    output reg ALUOutCtrl;
-    output reg EPCControl;
-    output reg HiWrite;
-    output reg LoWrite;
+    output reg PCWrite,
+    output reg MEMWrite,
+    output reg MEMRead,
+    output reg IRWrite,
+    output reg RBWrite,
+    output reg RAWrite,
+    output reg LSControl,
+    output reg RegWrite,
+    output reg SEControl,
+    output reg ALUOutCtrl,
+    output reg EPCControl,
+    output reg HiWrite,
+    output reg LoWrite,
 
 
     // FIOS DE CONTROLE COM MAIS DE 1 BIT
 
-    output reg [2:0] ALUOp;
-    output reg [2:0] ShiftControl
-    output reg [1:0] IorD;
-    output reg [2:0] PCSrc;
+    output reg [2:0] ALUOp,
+    output reg [2:0] ShiftControl,
+    output reg [1:0] IorD,
+    output reg [2:0] PCSrc,
 
     // FIO DE CONTROLE PARA MUX
     
-    output reg [1:0]ALUSrcA;
-    output reg [1:0]ALUSrcB;
-    output reg [3:0]DataSrc;
-    output reg RegDst;
-    output reg [1:0]ShiftAmt;
-    output reg ShiftSrc;
-    output reg ExcpContrl;
+    output reg [1:0]ALUSrcA,
+    output reg [1:0]ALUSrcB,
+    output reg [3:0]DataSrc,
+    output reg RegDst,
+    output reg [1:0]ShiftAmt,
+    output reg ShiftSrc,
+    output reg ExcpContrl,
 
     //FIO DE CONTROLE ESPECIAL PARA RESET
     
