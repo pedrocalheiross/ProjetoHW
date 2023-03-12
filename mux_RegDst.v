@@ -1,5 +1,5 @@
 module mux_RegDst (
-    input wire [31:0] data0, data1, data4, data5
+    input wire [31:0] data0, data1, data4, data5,
     input wire [2:0] RegDst, 
     output wire [31:0] out);
 
