@@ -19,7 +19,7 @@ module mux_RegDst (
 
     assign temp1 = (RegDst[0])? data1:data0;
     assign temp2 = (RegDst[0])? 31:29;
-    assign temp3 = (RegDST[0])? data4:data5;
+    assign temp3 = (RegDst[0])? data4:data5;
     assign temp4 = (RegDst[1])? temp2:temp1;
     assign out = (RegDst[2])? temp3:temp4;
 
